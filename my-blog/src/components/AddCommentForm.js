@@ -1,56 +1,22 @@
-// import axios from "axios";
-// import { useState } from "react";
-
-// const AddCommentForm = ({ articleName, onArticleUpdated }) => {
-//   const [name, setName] = useState("");
-//   const [commentText, setCommentText] = useState("");
-
-//   const addComment = async () => {
-//     const response = await axios.post(`/api/articles/${articleName}/comments`, {
-//       postedBy: name,
-//       text: commentText,
-//     });
-//     const updatedArticle = response.data;
-//     onArticleUpdated(updatedArticle);
-//     setName("");
-//     setCommentText("");
-//   };
-
-//   return (
-//     <div id="add-comment-form">
-//       <h3>Add a comment</h3>
-//       <label>
-//         Name
-//         <input value={name} onChange={(e) => setName(e.target.value)} type="text" />
-//       </label>
-//       <label>
-//         Comment:
-//         <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} rows="4" cols="50" />
-//       </label>
-//       <button onClick={addComment}>Add Comment</button>
-//     </div>
-//   );
-// };
-
-// export default AddCommentForm;
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
+import { CommentContext } from "../context/CommentsContext";
 
-const AddCommentForm = ({ articleName, onArticleUpdated }) => {
-  const [comments, setComments] = useState([]);
+const AddCommentForm = ({ articleName }) => {
+  const [comments, setComments] = useContext(CommentContext);
+
   const [name, setName] = useState("");
   const [commentText, setCommentText] = useState("");
 
   const addComment = async () => {
+    if (name.length < 1 && commentText.length < 1) {
+      return;
+    }
     const response = await axios.post(`/api/articles/${articleName}/comments`, {
       postedBy: name,
       text: commentText,
     });
-
-    const updatedArticle = response.data;
-    console.log(updatedArticle);
-
-    onArticleUpdated(updatedArticle);
+    setComments(response.data);
     setName("");
     setCommentText("");
   };
